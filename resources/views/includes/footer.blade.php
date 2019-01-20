@@ -20,11 +20,9 @@
 						<div class="footer">
 							<h3 class="footer-title">Categorías</h3>
 							<ul class="footer-links">
-								<li><a href="#">Ofertas</a></li>
-								<li><a href="#">Laptops</a></li>
-								<li><a href="#">Smartphones</a></li>
-								<li><a href="#">Camaras</a></li>
-								<li><a href="#">Accessorios</a></li>
+								@foreach($categories as $category)
+									<li><a href="#">{{$category->name}}</a></li>
+								@endforeach
 							</ul>
 						</div>
 					</div>
@@ -50,7 +48,6 @@
 							<ul class="footer-links">
 								<li><a href="#">Mi cuenta</a></li>
 								<li><a href="#">Ver carrito</a></li>
-								<li><a href="#">Lista de deseos</a></li>
 								<li><a href="#">Rastrear mi orden</a></li>
 								<li><a href="#">Ayuda</a></li>
 							</ul>

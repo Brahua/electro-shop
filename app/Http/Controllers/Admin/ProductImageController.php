@@ -10,6 +10,11 @@ use File;
 
 class ProductImageController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     public function getIndex(Product $product)
     {
 

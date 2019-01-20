@@ -11,12 +11,28 @@
 |
 */
 
+//Inicio
 Route::get('/', 'PrincipalController@getIndex');
+//Categorias
+Route::get('/category/{category}', 'CategoryController@getIndex')->name('category');
+//Producto
+Route::get('/product/{product}', 'ProductController@getIndex')->name('product');
+//Carrito
+Route::post('/cart/{product}', 'CartDetailController@postStore')->name('cart');
+Route::delete('/cart/{detail}', 'CartDetailController@postDelete')->name('cart.delete');
+Route::get('/verify-cart', 'CartDetailController@getVerifyCart')->name('verify.cart');
+Route::get('/cart-detail', 'CartDetailController@getCartDetail')->name('cart.detail');
+Route::put('/modify-quantity/{detail}', 'CartDetailController@postModifyQuantity')->name('modify.quantity');
+//Pedido
+Route::post('/order', 'CartController@postUpdate')->name('order');
+//Busqueda
+Route::get('/search', 'SearchController@getIndex')->name('search');
+Route::get('/products/json', 'SearchController@getData');
 
-
-Route::middleware(['auth'])->prefix('admin')->namespace('Admin')->group(function () {
+Route::middleware(['auth','admin'])->prefix('admin')->namespace('Admin')->group(function () {
 
 	Route::get('/', 'PrincipalController@getIndex');
+	Route::post('update/{cart}', 'PrincipalController@postUpdateStatusCart')->name('update.status.cart');
 	//Categorías
 	Route::get('/categories', 'CategoryController@getIndex')->name('admin.categories');
 	Route::post('/categories/create', 'CategoryController@postCreate')->name('admin.create.category');
@@ -38,4 +54,3 @@ Route::middleware(['auth'])->prefix('admin')->namespace('Admin')->group(function
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');

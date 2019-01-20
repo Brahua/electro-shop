@@ -9,6 +9,11 @@ use App\Category;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     public function getIndex() {
 
     	$products = Product::orderBy('name')->paginate(5);

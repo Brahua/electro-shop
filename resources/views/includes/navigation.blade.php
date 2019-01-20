@@ -2,11 +2,13 @@
 	<div class="container">
 		<div id="responsive-nav">
 			<ul class="main-nav nav navbar-nav">
-				<li class="active"><a href="#">Inicio</a></li>
-				<li><a href="#">Laptops</a></li>
-				<li><a href="#">Smartphones</a></li>
-				<li><a href="#">Camaras</a></li>
-				<li><a href="#">Accessorios</a></li>
+				<li {{request()->is('/') ? 'class=active' : '' }}><a href="{{url('/')}}">Inicio</a></li>
+				@if(!Auth::check())
+					<li {{request()->is('register*') ? 'class=active' : '' }}><a href="{{route('register')}}">Registro</a></li>
+				@endif
+				@foreach($categories as $category)
+					<li {{request()->is('category/'. $category->id) ? 'class=active' : '' }}><a href="{{route('category', $category)}}">{{$category->name}}</a></li>
+				@endforeach
 			</ul>
 		</div>
 	</div>

@@ -5,80 +5,102 @@
 					
 					<div class="col-md-3">
 						<div class="header-logo">
-							<a href="#" class="logo">
-								<img src="./img/logo.png" alt="">
+							<a href="{{url('/')}}" class="logo">
+								<img src="{{asset('img/logo.png')}}" alt="">
 							</a>
 						</div>
 					</div>
 					
 					<div class="col-md-6">
 						<div class="header-search">
-							<form>
-								<select class="input-select">
-									<option value="0" selected disabled>Categoría</option>
-									<option value="1">Category 01</option>
-									<option value="1">Category 02</option>
-								</select>
-								<input class="input" placeholder="Buscar aquí">
-								<button class="search-btn">Buscar</button>
+							<form method="get" action="{{ route('search') }}" style="display: flex; justify-content: center">
+								<input name="query" placeholder="¿Qué producto buscas?" id="buscar" class="form-control" style="width: 250px;">
+								<button type="submit" class="btn btn-sm" style="background-color: #D10024;"><i class="fa fa-search" style="color:#fff;"></i></button>
 							</form>
 						</div>
 					</div>
 					
 					<div class="col-md-3 clearfix">
 						<div class="header-ctn">
-							
-							<div>
-								<a href="#">
-									<i class="fa fa-heart-o"></i>
-									<span>Me gusta</span>
-									<div class="qty">2</div>
-								</a>
-							</div>
-							
-							<div class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-									<i class="fa fa-shopping-cart"></i>
-									<span>Carrito</span>
-									<div class="qty">3</div>
-								</a>
 
-								<div class="cart-dropdown">
-									<div class="cart-list">
-										<div class="product-widget">
-											<div class="product-img">
-												<img src="./img/product01.png" alt="">
+							@if(Auth::check())
+								<div>
+									<a href="{{ route('logout') }}"
+				                       onclick="event.preventDefault();
+				                       document.getElementById('logout-form').submit();" class="button">
+					                   	<i class="fa fa-circle-o-notch"></i>
+					                   	<span>Cerrar sesión</span>
+				               		</a>
+				               		<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+				                        @csrf
+				                    </form>
+								</div>
+
+								<div class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+										<i class="fa fa-shopping-cart"></i>
+										<span>Carrito</span>
+										<div class="qty">{{auth()->user()->cart->details->count()}}</div>
+									</a>
+
+									<div class="cart-dropdown">
+										@foreach(auth()->user()->cart->details as $detail)
+										<div class="cart">
+											<div class="product-widget">
+												<div class="product-img">
+													<img src="{{$detail->product->featured_image_url}}" alt="">
+												</div>
+												<div class="product-body">
+													<h3 class="product-name"><a href="#">{{$detail->product->name}}</a></h3>
+													<h4 class="product-price"><span class="qty">x {{$detail->quantity}}</span>S/. {{$detail->product->price}}</h4>
+												</div>
+												<form method="POST" action="{{route('cart.delete', $detail)}}">
+													@csrf {{ method_field('DELETE') }}
+													<button type="submit" class="delete" style="background-color:red;"><i class="fa fa-times"></i></button>
+												</form>
 											</div>
-											<div class="product-body">
-												<h3 class="product-name"><a href="#">product name goes here</a></h3>
-												<h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
-											</div>
-											<button class="delete"><i class="fa fa-close"></i></button>
+										</div>
+										@endforeach
+
+										<div class="cart-summary">
+											<small>{{auth()->user()->cart->details->count()}} productos seleccionados</small>
+											<h5>SUBTOTAL: S/. {{auth()->user()->cart->total}}</h5>
 										</div>
 
-										<div class="product-widget">
-											<div class="product-img">
-												<img src="./img/product02.png" alt="">
-											</div>
-											<div class="product-body">
-												<h3 class="product-name"><a href="#">product name goes here</a></h3>
-												<h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-											</div>
-											<button class="delete"><i class="fa fa-close"></i></button>
+										<div class="cart-btns">
+											<a href="{{route('cart.detail')}}">Ver carro</a>
+											<a href="{{route('verify.cart')}}">Verificar <i class="fa fa-arrow-circle-right"></i></a>
 										</div>
-									</div>
-
-									<div class="cart-summary">
-										<small>3 Item(s) selected</small>
-										<h5>SUBTOTAL: $2940.00</h5>
-									</div>
-
-									<div class="cart-btns">
-										<a href="#">View Cart</a>
-										<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
-							</div>
+							@else
+								<div>
+									<a href="{{ route('login') }}" class="button">
+					                   	<i class="fa fa-user"></i>
+					                   	<span>Ingresar</span>
+				               		</a>
+								</div>
+								
+								<div class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+										<i class="fa fa-shopping-cart"></i>
+										<span>Carrito</span>
+										<div class="qty">0</div>
+									</a>
+
+									<div class="cart-dropdown">
+										<div class="cart-summary">
+											<small>0 productos seleccionados</small>
+											<h5>SUBTOTAL: S/. 0</h5>
+										</div>
+
+										<div class="cart-btns">
+											<a href="{{route('cart.detail')}}">Ver carro</a>
+											<a href="{{route('verify.cart')}}">Verificar <i class="fa fa-arrow-circle-right"></i></a>
+										</div>
+									</div>
+								</div>
+							@endif
 							
 							<div class="menu-toggle">
 								<a href="#">

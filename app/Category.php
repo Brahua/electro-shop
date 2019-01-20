@@ -24,6 +24,7 @@ class Category extends Model
     	return $this->hasMany(Product::class);
     }
 
+
     public function getFeaturedImageUrlAttribute()
     {
         if ($this->image)
@@ -34,6 +35,6 @@ class Category extends Model
         if ($firstProduct)
             return $firstProduct->featured_image_url;
 
-        return '/images/default.gif';
+        return asset('images/default.gif');
     }
 }

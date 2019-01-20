@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -28,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -52,6 +55,12 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'last_name' => ['required', 'string', 'max:250'],
+            'address' => ['required', 'string', 'max:250'],
+            'city' => ['required', 'string', 'max:50'],
+            'country' => ['required', 'string', 'max:50'],
+            'phone' => ['required', 'string', 'max:250'],
+            'username' => ['required', 'string', 'unique:users'],
         ]);
     }
 
@@ -67,6 +76,19 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'last_name' => $data['last_name'],
+            'address' => $data['address'],
+            'city' => $data['city'],
+            'phone' => $data['phone'],
+            'country' => $data['country'],
+            'username' => $data['username']
         ]);
+    }
+
+    public function showRegistrationForm(Request $request)
+    {
+        $categories = Category::orderBy('name')->get();
+        $email = $request->input('email');
+        return view('auth.register')->with(compact('email','categories'));
     }
 }

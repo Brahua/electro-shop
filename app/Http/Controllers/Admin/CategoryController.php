@@ -9,6 +9,11 @@ use File;
 
 class CategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     public function getIndex() {
 
     	$categories = Category::orderBy('name')->paginate(2);

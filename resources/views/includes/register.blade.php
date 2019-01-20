@@ -4,9 +4,9 @@
 				<div class="col-md-12">
 					<div class="newsletter">
 						<p>Regístrese para recibir <strong>NUEVAS OFERTAS</strong></p>
-						<form>
-							<input class="input" type="email" placeholder="Ingresar su email">
-							<button class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
+						<form method="get" action="{{ url('/register') }}">
+							<input class="input" type="email" placeholder="Ingresar su email" name="email">
+							<button type="submit" class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
 						</form>
 						<ul class="newsletter-follow">
 							<li>

@@ -69,16 +69,14 @@
       </div>
       <!-- /.col -->
     </div>
-    @foreach($categories as $category)
-      <p>{{$category}}</p>
-    @endforeach
 
     <div class="row">
       <div class="col-md-8">
-        <!-- TABLE: LATEST ORDERS -->
-        <div class="box box-danger">
+
+        <div class="box box-primary">
+
           <div class="box-header with-border">
-            <h3 class="box-title">Latest Orders</h3>
+            <h3 class="box-title">Últimos pedidos</h3>
 
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -86,93 +84,81 @@
               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
             </div>
           </div>
-          <!-- /.box-header -->
+         
           <div class="box-body">
+            @if (session('notification'))
+                <div class="alert alert-success alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <h4><i class="icon fa fa-check"></i> Guardado! </h4>
+                  {{ session('notification') }}
+                </div>
+            @endif
             <div class="table-responsive">
               <table class="table no-margin">
                 <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Item</th>
-                  <th>Status</th>
-                  <th>Popularity</th>
-                </tr>
+                  <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Fecha de pedido</th>
+                    <th>Fecha de entrega</th>
+                    <th>Total (S/.)</th>
+                    <th>Estado</th>
+                    <th style="text-align: center;">Ver</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                  <td>Call of Duty IV</td>
-                  <td><span class="label label-success">Shipped</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                  <td>Samsung Smart TV</td>
-                  <td><span class="label label-warning">Pending</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                  <td>iPhone 6 Plus</td>
-                  <td><span class="label label-danger">Delivered</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                  <td>Samsung Smart TV</td>
-                  <td><span class="label label-info">Processing</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                  <td>Samsung Smart TV</td>
-                  <td><span class="label label-warning">Pending</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                  <td>iPhone 6 Plus</td>
-                  <td><span class="label label-danger">Delivered</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                  <td>Call of Duty IV</td>
-                  <td><span class="label label-success">Shipped</span></td>
-                  <td>
-                    <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                  </td>
-                </tr>
+                  @foreach($carts as $cart)
+                  <tr>
+                    <td>{{$cart->id}}</td>
+                    <td>{{$cart->user->name}}</td>
+                    <td>
+                      @if($cart->order_date)
+                        {{$cart->order_date}}
+                      @else
+                        <span class="label label-info">{{strtoupper('En proceso...')}}</span>
+                      @endif
+                    </td>
+                    <td>{{$cart->arrived_date ? $cart->arrived_date : 'Sin entregar'}}</td>
+                    <td>{{$cart->total}}</td>
+                    <td>
+                      @if($cart->status == 'Pendiente')
+                        <span class="label label-warning">{{strtoupper($cart->status)}}</span>
+                      @elseif($cart->status == 'Activo')
+                        <span class="label label-success">{{strtoupper($cart->status)}}</span>
+                      @elseif($cart->status == 'Cancelado')
+                        <span class="label label-danger">{{strtoupper($cart->status)}}</span>
+                      @elseif($cart->status == 'Finalizado')
+                        <span class="label label-info">{{strtoupper($cart->status)}}</span> 
+                      @endif
+                    </td>
+                    <td style="text-align: center;">
+                      @if($cart->status == 'Activo')
+                        <i class="fa fa-clock-o"></i>
+                      @else
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#view-{{$cart->id}}"><i class="fa fa-eye"></i></button>
+                      @endif
+                    </td>
+                  </tr>
+                  @endforeach
                 </tbody>
               </table>
             </div>
-            <!-- /.table-responsive -->
           </div>
-          <!-- /.box-body -->
+
           <div class="box-footer clearfix">
-            <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a>
-            <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a>
+            {!! $carts->links('admin.includes.pagination') !!}
           </div>
-          <!-- /.box-footer -->
+          
         </div>
-        <!-- /.box -->
+
       </div>
+
       <div class="col-md-4">
-        <div class="box box-danger">
+
+        <div class="box box-primary">
+
           <div class="box-header with-border">
-            <h3 class="box-title">Recently Added Products</h3>
+            <h3 class="box-title">Productos reciéntemente añadidos</h3>
 
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -180,71 +166,189 @@
               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
             </div>
           </div>
-          <!-- /.box-header -->
+        
           <div class="box-body">
             <ul class="products-list product-list-in-box">
-              <li class="item">
-                <div class="product-img">
-                  <img src="dist/img/default-50x50.gif" alt="Product Image">
-                </div>
-                <div class="product-info">
-                  <a href="javascript:void(0)" class="product-title">Samsung TV
-                    <span class="label label-warning pull-right">$1800</span></a>
-                  <span class="product-description">
-                        Samsung 32" 1080p 60Hz LED Smart HDTV.
-                      </span>
-                </div>
-              </li>
-              <!-- /.item -->
-              <li class="item">
-                <div class="product-img">
-                  <img src="dist/img/default-50x50.gif" alt="Product Image">
-                </div>
-                <div class="product-info">
-                  <a href="javascript:void(0)" class="product-title">Bicycle
-                    <span class="label label-info pull-right">$700</span></a>
-                  <span class="product-description">
-                        26" Mongoose Dolomite Men's 7-speed, Navy Blue.
-                      </span>
-                </div>
-              </li>
-              <!-- /.item -->
-              <li class="item">
-                <div class="product-img">
-                  <img src="dist/img/default-50x50.gif" alt="Product Image">
-                </div>
-                <div class="product-info">
-                  <a href="javascript:void(0)" class="product-title">Xbox One <span
-                      class="label label-danger pull-right">$350</span></a>
-                  <span class="product-description">
-                        Xbox One Console Bundle with Halo Master Chief Collection.
-                      </span>
-                </div>
-              </li>
-              <!-- /.item -->
-              <li class="item">
-                <div class="product-img">
-                  <img src="dist/img/default-50x50.gif" alt="Product Image">
-                </div>
-                <div class="product-info">
-                  <a href="javascript:void(0)" class="product-title">PlayStation 4
-                    <span class="label label-success pull-right">$399</span></a>
-                  <span class="product-description">
-                        PlayStation 4 500GB Console (PS4)
-                      </span>
-                </div>
-              </li>
-              <!-- /.item -->
+              @foreach($products as $product)
+                <li class="item">
+                  <div class="product-img">
+                    <img src="dist/img/default-50x50.gif" alt="Product Image">
+                  </div>
+                  <div class="product-info">
+                    <a href="{{route('admin.product.images', $product)}}" class="product-title">{{$product->name}}
+                      <span class="label label-success pull-right">S/. {{$product->price}}</span></a>
+                    <span class="product-description">
+                          {{$product->description}}
+                        </span>
+                  </div>
+                </li>
+              @endforeach     
             </ul>
           </div>
-          <!-- /.box-body -->
+        
           <div class="box-footer text-center">
-            <a href="javascript:void(0)" class="uppercase">View All Products</a>
+            <a href="{{route('admin.products')}}" class="uppercase">Ver todos los productos</a>
           </div>
-          <!-- /.box-footer -->
+        
         </div>
+
       </div>
-    </div>  
+    </div>
+
+
+    @foreach($carts as $cart)
+      <div class="modal fade" id="view-{{$cart->id}}">
+            <div class="modal-dialog" style="width: 80%;">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">Detalles del Pedido</h4>
+                </div>
+
+                <div class="modal-body">
+                  
+                    <div class="row">
+                      <div class="col-md-12">
+                        <form method="POST" action="{{route('update.status.cart', $cart)}}" class="form-inline">
+                          @csrf
+                          <div class="form-group">
+                            <label for="status">Cambiar Estado del Pedido &nbsp;&nbsp;</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="Activo" {{$cart->status == 'Activo' ? 'selected="selected"' : ''}}>Activo</option>
+                                <option value="Pendiente" {{$cart->status == 'Pendiente' ? 'selected="selected"' : ''}}>Pendiente</option>
+                                <option value="Cancelado" {{$cart->status == 'Cancelado' ? 'selected="selected"' : ''}}>Cancelado</option>
+                                <option value="Finalizado" {{$cart->status == 'Finalizado' ? 'selected="selected"' : ''}}>Finalizado</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                        </div>
+                        </form>
+                        <section class="invoice">
+                          
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <h2 class="page-header">
+                                <i class="fa fa-globe"></i> Electro Shop.
+                                <small class="pull-right">Date: {{$cart->order_date}}</small>
+                              </h2>
+                            </div>
+                            
+                          </div>
+                        
+                          <div class="row invoice-info">
+                            <div class="col-sm-4 invoice-col">
+                              De
+                              <address>
+                                <strong>Electro Shop.</strong><br>
+                                795 Folsom Ave, Suite 600<br>
+                                San Francisco, CA 94107<br>
+                                Phone: (804) 123-5432<br>
+                                Email: info@almasaeedstudio.com
+                              </address>
+                            </div>
+                            
+                            <div class="col-sm-4 invoice-col">
+                              Para
+                              <address>
+                                <strong>{{$cart->user->name}}</strong><br>
+                                {{$cart->user->address}}<br>
+                                {{$cart->user->city | $cart->user->city}}<br>
+                                Phone: {{$cart->user->phone}}<br>
+                                Email: {{$cart->user->email}}
+                              </address>
+                            </div>
+                            
+                            <div class="col-sm-4 invoice-col">
+                              <b>Nro. Comprobante #007612</b><br>
+                              <br>
+                              <b>Pedido ID:</b> {{$cart->id}}<br>
+                              <b>Fecha de entrega:</b> {{$cart->arrived_date}}<br>
+                            </div>
+                           
+                          </div>
+                          
+                          <div class="row">
+                            <div class="col-xs-12 table-responsive">
+                              <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Producto</th>
+                                    <th>Descripcion</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @foreach($cart->details as $detail)
+                                    <tr>
+                                      <td>{{$detail->product->name}}</td>
+                                      <td>{{$detail->product->description}}</td>
+                                      <td>S/. {{$detail->product->price}}</td>
+                                      <td>{{$detail->quantity}}</td>
+                                      <td>S/. {{($detail->quantity)*($detail->product->price)}}</td>
+                                    </tr>
+                                  @endforeach
+                                </tbody>
+                              </table>
+                            </div>
+                       
+                          </div>
+
+                          <div class="row">
+                            <!-- accepted payments column -->
+                            <div class="col-xs-6">
+                              <p class="lead">Payment Methods:</p>
+                              <img src="{{asset('dist/img/credit/visa.png')}}" alt="Visa">
+                              <img src="{{asset('dist/img/credit/mastercard.png')}}" alt="Mastercard">
+                              <img src="{{asset('dist/img/credit/american-express.png')}}" alt="American Express">
+                              <img src="{{asset('dist/img/credit/paypal2.png')}}" alt="Paypal">
+
+                              <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
+                                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem plugg
+                                dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
+                              </p>
+                            </div>
+
+                            <div class="col-xs-6">
+
+                              <div class="table-responsive">
+                                <table class="table">
+                                  <tr>
+                                    <th>IGV (18%)</th>
+                                    <td>S/. {{$cart->total*0.18}}</td>
+                                  </tr>
+                                  <tr>
+                                    <th>Total:</th>
+                                    <td>S/. {{$cart->total}}</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+
+                          </div>
+                        
+                          <div class="row no-print">
+                            <div class="col-xs-12">
+                              <a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
+                              <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i> Submit Payment
+                              </button>
+                              <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                                <i class="fa fa-download"></i> Generate PDF
+                              </button>
+                            </div>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        @endforeach      
     
   </section>
 
